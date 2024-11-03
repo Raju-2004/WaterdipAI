@@ -23,6 +23,11 @@ interface TimeSeriesData {
   visitors: number
 }
 
+interface ColumnChartData {
+  country: string
+  visitors: number
+}
+
 const Dashboard: React.FC = () => {
   const [data, setData] = useState<Booking[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -77,7 +82,7 @@ const Dashboard: React.FC = () => {
     return data.filter((booking) => {
       const bookingDate = new Date(
         parseInt(booking.arrival_date_year),
-        getMonthNumber(booking.arrival_date_month) - 1,
+        getMonthNumber(booking.arrival_date_month),
         parseInt(booking.arrival_date_day_of_month)
       )
       return bookingDate >= dateRange.startDate! && bookingDate <= dateRange.endDate!
@@ -105,6 +110,26 @@ const Dashboard: React.FC = () => {
       }, [])
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
   }, [filteredData])
+
+  const ColumnCharData = useMemo(() => {
+    return filteredData.reduce((acc: ColumnChartData[], booking) => {
+      const country = booking.country
+      const existingEntry = acc.find((booking) => booking.country === country)
+
+      if (existingEntry) {
+        existingEntry.visitors += booking.adults + booking.babies + booking.children
+      } else {
+        acc.push({
+          country,
+          visitors: booking.adults + booking.babies + booking.children,
+        })
+      }
+
+      return acc
+    }, [])
+  }, [filteredData])
+
+  console.log(ColumnCharData)
 
   const timeSeriesOptions: ApexOptions = useMemo(
     () => ({
@@ -154,6 +179,54 @@ const Dashboard: React.FC = () => {
     [timeSeriesData]
   )
 
+  const ColumnChartOptions: ApexOptions = useMemo(
+    () => ({
+      chart: {
+        type: 'bar',
+        zoom: {
+          enabled: true,
+          type: 'x',
+          autoScaleYaxis: true,
+        },
+        toolbar: {
+          autoSelected: 'zoom',
+        },
+        animations: {
+          enabled: false,
+        },
+        background: '#ffffff',
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        curve: 'smooth',
+        width: 2,
+      },
+      title: {
+        text: 'Daily Visitors',
+        align: 'left',
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+        },
+      },
+      xaxis: {
+        type: 'category',
+        categories: ColumnCharData.map((item) => item.country),
+      },
+      tooltip: {
+        x: {
+          format: 'dd MMM yyyy',
+        },
+      },
+      theme: {
+        mode: 'light',
+      },
+    }),
+    [ColumnCharData]
+  )
+
   const timeSeriesSeries = useMemo(
     () => [
       {
@@ -162,6 +235,16 @@ const Dashboard: React.FC = () => {
       },
     ],
     [timeSeriesData]
+  )
+
+  const ColumnChartSeries = useMemo(
+    () => [
+      {
+        name: 'Total Visitors Per Country',
+        data: ColumnCharData.map((item) => item.visitors),
+      },
+    ],
+    [ColumnCharData]
   )
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -221,6 +304,16 @@ const Dashboard: React.FC = () => {
               options={timeSeriesOptions}
               series={timeSeriesSeries}
               type="line"
+              height={400}
+            />
+          )}
+
+          {timeSeriesData.length > 0 && (
+            <ReactApexChart
+              key={`chart-${ColumnCharData.length}`}
+              options={ColumnChartOptions}
+              series={ColumnChartSeries}
+              type="bar"
               height={400}
             />
           )}
