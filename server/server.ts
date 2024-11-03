@@ -2,8 +2,11 @@ import express from 'express'
 import fs from 'fs'
 import path from 'path'
 import csv from 'csv-parser'
+import cors from 'cors'
 
 const app = express()
+
+app.use(cors())
 
 interface Booking {
   arrival_date_year: string
