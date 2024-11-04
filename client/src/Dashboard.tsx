@@ -51,6 +51,7 @@ const Dashboard: React.FC = () => {
     })
   }
 
+
   if (isLoading) {
     return <div className="loading">Loading...</div>
   }
