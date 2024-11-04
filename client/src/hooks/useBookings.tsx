@@ -9,7 +9,7 @@ export const useBookings = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true)
-        const response = await fetch('http://localhost:3000/bookings')
+        const response = await fetch(process.env.REACT_APP_API_URL + '/bookings')
         const bookings: Booking[] = await response.json()
         setData(bookings)
       } catch (error) {
