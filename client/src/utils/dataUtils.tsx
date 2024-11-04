@@ -15,3 +15,7 @@ export const getMonthNumber = (monthName: string): number => {
   }
   return months[monthName] || 1
 }
+
+export const parseBookingDate = (year: string, month: string, day: string): Date => {
+  return new Date(parseInt(year), getMonthNumber(month) - 1, parseInt(day))
+}

@@ -1,7 +1,7 @@
 import { ApexOptions } from 'apexcharts'
-import { TimeSeriesData, ColumnChartData } from '../types'
+import { TimeSeriesData, ColumnChartData, SparkLineChartData } from '../types'
 
-export const getChartOptions = (timeSeriesData: TimeSeriesData[]): ApexOptions => ({
+export const getTimeSeriesChartOptions = (timeSeriesData: TimeSeriesData[]): ApexOptions => ({
   chart: {
     type: 'line',
     zoom: { enabled: true, type: 'x', autoScaleYaxis: true },
@@ -44,4 +44,30 @@ export const getColumnChartOptions = (columnChartData: ColumnChartData[]): ApexO
     categories: columnChartData.map((item) => item.country),
   },
   theme: { mode: 'light' },
+})
+
+export const getSparkLineChartOptions = (data: SparkLineChartData, title: string): ApexOptions => ({
+  chart: {
+    type: 'area',
+    sparkline: {
+      enabled: true,
+    },
+    background: '#ffffff',
+  },
+  colors: ['#1E90FF'],
+
+  stroke: {
+    curve: 'straight',
+    width: 2,
+  },
+  title: {
+    text: `Total: ${data.total}`,
+    align: 'center',
+    style: { fontSize: '14px', fontWeight: 'bold' },
+  },
+  subtitle: {
+    text: `${title}`,
+    align: 'center',
+    style: { fontSize: '12px' },
+  },
 })

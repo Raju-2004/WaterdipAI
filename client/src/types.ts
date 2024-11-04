@@ -22,3 +22,8 @@ export interface ColumnChartData {
   country: string
   visitors: number
 }
+
+export interface SparkLineChartData {
+  Array: number[]
+  total: number
+}
