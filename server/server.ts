@@ -17,7 +17,7 @@ interface Booking {
   babies: number
   country: string
 }
-
+  
 const BookingData: Booking[] = []
 
 fs.createReadStream(path.join(__dirname, 'hotel_bookings_1000.csv'))

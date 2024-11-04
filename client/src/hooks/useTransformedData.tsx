@@ -1,6 +1,5 @@
-// hooks/useTransformedData.ts
 import { useMemo } from 'react'
-import { Booking, TimeSeriesData, ColumnChartData, SparkLineChartData } from '../types'
+import { Booking } from '../types'
 import { parseBookingDate } from '../utils/dataUtils'
 
 export const useFilteredData = (data: Booking[], dateRange: any) => {
