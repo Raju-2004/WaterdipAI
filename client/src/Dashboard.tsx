@@ -1,13 +1,29 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Calendar } from 'lucide-react'
 import { Charts } from './components/Charts'
-import { DateRange } from './types'
+import { Booking, DateRange } from './types'
 import './dashboard.css'
-import { useBookings } from './hooks/useBookings'
 import { useColumnChartData, useFilteredData, useSparkLineData, useTimeSeriesData } from './hooks/useTransformedData'
 
 const Dashboard: React.FC = () => {
-  const { data, isLoading } = useBookings()
+  const [data, setData] = useState<Booking[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true)
+        const response = await fetch(process.env.REACT_APP_API_URL + '/bookings')
+        const bookings: Booking[] = await response.json()
+        setData(bookings)
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
 
   const [dateRange, setDateRange] = useState<DateRange>({
     startDate: null,
@@ -36,7 +52,7 @@ const Dashboard: React.FC = () => {
   }
 
   if (isLoading) {
-    return <div className="p-4">Loading...</div>
+    return <div className="loading">Loading...</div>
   }
 
   return (
